@@ -2,7 +2,7 @@
 import sys
 import re
 import os
-import replace_list   #custom import file for word replacement
+#import replace_list   #custom import file for word replacement
 from argparse import ArgumentParser
 
 parser = ArgumentParser(description='to find and replace characters/words from machine generated transliterated text \n\r'+
