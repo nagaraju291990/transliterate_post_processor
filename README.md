@@ -1,7 +1,7 @@
 
 # How to run?
 
-    python3 post_processor.py inputfile.txt  
+    python3 post_processor.py -i=inputfile.txt  -l=list.txt
 
 ## replace list 
 
