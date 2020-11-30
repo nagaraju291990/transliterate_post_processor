@@ -5,7 +5,7 @@ Input file is a machine generated transliterated(or could be any general) file
 
 ## How to run?
 
-    python3 post_processor.py -i=inputfile.txt  -l=list.txt
+    python3 post_processor.py -i=inputfile.txt  -l=list.txt -r=y
 
 ### list.txt
 ```bash
