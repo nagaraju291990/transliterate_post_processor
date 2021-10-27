@@ -16,20 +16,22 @@ parser.add_argument("-r", "--replace", dest="replaceFlag",
 					help="replace anywhere in the string",required=False)
 parser.add_argument("-l", "--listfile", dest="listfile",
 					help="specify a list file that has tab seperated content", required=True)
+parser.add_argument("-o", "--outfile", dest="outfile",
+					help="specify output file name", required=True)
 
 args = parser.parse_args()
 
 inputfile = args.inputfile
 listfile = args.listfile
 replaceFlag = args.replaceFlag
-
+outfile = args.outfile
 #open input file using open file mode
-fp1 = open(inputfile) # Open file on read mode
+fp1 = open(inputfile, encoding="utf-8") # Open file on read mode
 lines = fp1.read().split("\n") # Create a list containing all lines
 fp1.close() # Close file
 
 #open list file using open file mode
-fp2 = open(listfile) # Open file on read mode
+fp2 = open(listfile, encoding="utf-8") # Open file on read mode
 words = fp2.read().split("\n") # Create a list containing all lines
 fp2.close() # Close file
 
@@ -119,10 +121,11 @@ for key in keys:
 		lines[i] = line
 		i = i +1
 		#print(line)
-
+fpw = open(outfile, "w", encoding='utf-8')
 for line in lines:
 
 	#convert multispace to single space
 	line = re.sub(r' +', " ", line, flags = re.MULTILINE)
 	line = re.sub(r' ।', "।", line, flags = re.MULTILINE)
-	print(line)
+	#print(line)
+	fpw.write(line)
