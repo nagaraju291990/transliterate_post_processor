@@ -80,6 +80,7 @@ for key in keys:
 
 		#character replacement of o to danda
 		line = re.sub(r'o', '। ', line, flags = re.MULTILINE)
+		line = re.sub(r'\.', '। ', line, flags = re.MULTILINE)
 
 		#line = re.sub(r'\uFFFD', "-", line, flags = re.MULTILINE) #replacement character
 
@@ -128,4 +129,4 @@ for line in lines:
 	line = re.sub(r' +', " ", line, flags = re.MULTILINE)
 	line = re.sub(r' ।', "।", line, flags = re.MULTILINE)
 	#print(line)
-	fpw.write(line)
+	fpw.write(line+"\n")
