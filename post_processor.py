@@ -80,7 +80,8 @@ for key in keys:
 
 		#character replacement of o to danda
 		line = re.sub(r'o', '। ', line, flags = re.MULTILINE)
-		line = re.sub(r'[^0-9]?\.[\u0900-\u09FF 0-9A-Za-z$]', '। ', line, flags = re.MULTILINE)
+		line = re.sub(r'\.[\u0900-\u09FF 0-9A-Za-z]', '। ', line, flags = re.MULTILINE)
+		line = re.sub(r'[\u0900-\u09FF]\.$', '। ', line, flags = re.MULTILINE)
 
 		#line = re.sub(r'\uFFFD', "-", line, flags = re.MULTILINE) #replacement character
 
