@@ -35,4 +35,5 @@ for line in lines:
     if(re.search(r'ح', line) and re.search(r'ह', line)):
         line = re.sub(r'ह', 'ह़', line)
 
+    line = re.sub(r'़+','़', line)
     print(line)
