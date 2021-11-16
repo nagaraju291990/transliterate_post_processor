@@ -13,6 +13,11 @@ It is a tab seperated file with column1 containing what to search for and
 column2 containing what to replace with
 ```
 
+## nukta fixer
+This program will generate nuktas wherver necessary
+```bash
+python3 nukta.py inputfile
+```
 ## grep list
 
 This script will extract nukta characters from input file
