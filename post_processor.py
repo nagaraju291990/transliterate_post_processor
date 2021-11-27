@@ -35,31 +35,6 @@ fp2 = open(listfile, encoding="utf-8") # Open file on read mode
 words = fp2.read().split("\n") # Create a list containing all lines
 fp2.close() # Close file
 
-def ellipse_patch(cur_line):
-	    # Handle ellipsis ... and .. 
-    cur_line = re.sub(r'([\.]{3,})', ' __ELLIP3__ ', cur_line)
-    cur_line = re.sub(r'([\.]{2,2})', ' __ELLIP2__ ', cur_line)
-    # . (dot) replace a purn-viram in text
-    # (don't put purn-viram in decimal number)
-    cur_line = re.sub(r'([\u0900-\u09FF]+)\.', r'\1। ', cur_line)
-    # turn ` into '
-    cur_line = re.sub(r'\'\'', '\"', cur_line)
-    # turn '' into "
-    cur_line = re.sub(r'\'\'', '\"', cur_line)
-
-    # Handle ellipsis ... and .. replacement 
-    cur_line = re.sub(r'__ELLIP3__', '...', cur_line)
-    cur_line = re.sub(r'__ELLIP2__', '..', cur_line)
-
-    # clean up extraneous spaces
-    cur_line = re.sub(r' +',' ', cur_line)
-    cur_line = re.sub(r'^ ','', cur_line)
-    cur_line = re.sub(r' $',' ', cur_line)
-    cur_line = re.sub(r'(\b[\u0900-\u09FF]+\b) व (\b[\u0900-\u09FF]+\b)', r'\1-व-\2', cur_line)
-    cur_line = re.sub(r'(\b[\u0900-\u09FF]+\b) ए (\b[\u0900-\u09FF]+\b)', r'\1-ए-\2', cur_line)
-    cur_line = re.sub(r'(\b[\u0900-\u09FF]+\b) अ (\b[\u0900-\u09FF]+\b)', r'\1-अ-\2', cur_line)
-    return cur_line
-
 six_word_hash = {}
 five_word_hash = {}
 four_word_hash = {}
@@ -95,26 +70,42 @@ keys = all_hash.keys()
 #read input file line by line and replace with hash match values
 k = 0
 i = 0
-#out = []
 kl = len(keys)-1
-#for line in lines:
 for key in keys:
 	i = 0
 
 	for line in lines:
 
 		#character replacement of o to danda
-		line = re.sub(r'o', '। ', line, flags = re.MULTILINE)
-		line = re.sub(r'\.([\u0900-\u09FF 0-9A-Za-z\"\'‘’”“\?\!])', r'।\1 ', line, flags = re.MULTILINE)
-		line = re.sub(r'([\u0900-\u09FF])\.$', r'\1। ', line, flags = re.MULTILINE)
+		#line = re.sub(r'o', '। ', line, flags = re.MULTILINE)
+		#line = re.sub(r'\.([\u0900-\u09FF 0-9A-Za-z\"\'‘’”“\?\!])', r'।\1 ', line, flags = re.MULTILINE)
+		#line = re.sub(r'([\u0900-\u09FF])\.$', r'\1। ', line, flags = re.MULTILINE)
 
-		#line = re.sub(r'\uFFFD', "-", line, flags = re.MULTILINE) #replacement character
+		# Handle ellipsis ... and .. 
+		line = re.sub(r'([\.]{3,})', '__ELLIP3__ ', line)
+		line = re.sub(r'([\.]{2,2})', '__ELLIP2__ ', line)
+		# . (dot) replace a purn-viram in text
+		# (don't put purn-viram in decimal number)
+		line = re.sub(r'([\u0900-\u09FF]+)\.', r'\1। ', line)
+		# turn ` into '
+		line = re.sub(r'\`', '\'', line)
+		# turn '' into "
+		line = re.sub(r'\'\'', '\"', line)
 
-		#for replacement of words
-		#for key, value in replace_list.my_list.items():
-		#for key in keys:
+		# Handle ellipsis ... and .. replacement 
+		line = re.sub(r'__ELLIP3__', '...', line)
+		line = re.sub(r'__ELLIP2__', '..', line)
 
-		#line = re.sub(key, value, line, flags=re.MULTILINE)
+		# clean up extraneous spaces
+		line = re.sub(r' +',' ', line)
+		line = re.sub(r'^ ','', line)
+		line = re.sub(r' $',' ', line)
+		line = re.sub(r'। \"', r'।"', line)
+		line = re.sub(r'(\b[\u0900-\u09FF]+\b) व (\b[\u0900-\u09FF]+\b)', r'\1-ओ-\2', line)
+		line = re.sub(r'(\b[\u0900-\u09FF]+\b) ए (\b[\u0900-\u09FF]+\b)', r'\1-ए-\2', line)
+		line = re.sub(r'(\b[\u0900-\u09FF]+\b) अ (\b[\u0900-\u09FF]+\b)', r'\1-ए-\2', line)
+
+
 		my_regex1 = r"([,\"\'\( \/\-\|])" + key + r"([ ,\.!\"।\'\/\-)])"
 		my_regex2 = r"([,\"\'\( \/\-\|])" + key + r"$"
 		my_regex3 = r"^" + key + r"([ ,\.!\"।\'\/\-)])"
@@ -146,7 +137,6 @@ for key in keys:
 
 		#print("before:", line)
 		lines[i] = line
-		line = ellipse_patch(line)
 		i = i +1
 		#print(line)
 fpw = open(outfile, "w", encoding='utf-8')
