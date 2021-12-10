@@ -5,7 +5,11 @@ Input file is a machine generated transliterated(or could be any general) file
 
 ## How to run?
 
+### Post Processor
     python3 post_processor.py -i=inputfile.txt  -l=list.txt -r=y
+
+### Transliterate -- Mytransliterate.py
+    python3 mytransliterate.py -i=mystory.txt -b=mybag-uniq.csv -o=out.txt -l=urdu 
 
 ### list.txt
 ```bash
