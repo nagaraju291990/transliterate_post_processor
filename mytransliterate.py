@@ -2,6 +2,7 @@
 import sys
 import re
 import os
+import subprocess
 #import replace_list   #custom import file for word replacement
 from argparse import ArgumentParser
 
@@ -16,8 +17,10 @@ parser.add_argument("-r", "--replace", dest="replaceFlag",
 					help="replace anywhere in the string",required=False)
 parser.add_argument("-b", "--bagfile", dest="listfile",
 					help="specify a list file that has tab seperated content", required=True)
-parser.add_argument("-l", "--language", dest="lang",
-					help="specify language default is urdu", required=False)
+parser.add_argument("-s", "--source", dest="srclang",
+					help="specify source language;-s=urd|hin|tel", required=True)
+parser.add_argument("-t", "--target", dest="tgtlang",
+					help="specify target language;-t=urd|hin|tel", required=True)
 parser.add_argument("-o", "--outfile", dest="outfile",
 					help="specify output file name", required=True)
 
@@ -25,7 +28,8 @@ args = parser.parse_args()
 
 inputfile = args.inputfile
 listfile = args.listfile
-lang = args.lang
+srclang = args.srclang
+tgtlang = args.tgtlang
 replaceFlag = args.replaceFlag
 outfile = args.outfile
 
@@ -46,7 +50,7 @@ def tokenize(text):
 	text = re.sub(r'^', ' ', text)
 	text = re.sub(r'$', ' ', text)
 	text = re.sub(r'([\.,\'\"!\-_\+=\(\):;\?])', r' \1 ', text)
-	if(lang == "urdu"):
+	if(srclang == "urd"):
 		text = re.sub(r'([؟،۔])', r' \1 ', text)
 
 	#convert multiple spaces into single space
@@ -60,12 +64,32 @@ def get_unique_list(text):
 	u_list = list(set(all_list))
 	return u_list
 
-#search in bag of words-input=list,output=hash
+#get machine transliterated text from command
+def get_mt_out(ulist):
+	fpw1 = open("uwords.txt", "w", encoding='utf-8')
+	fpw1.write("\n".join(ulist))
+	fpw1.close()
+	proc = os.system('/usr/local/bin/indictrans < uwords.txt --s ' + srclang + ' --t ' + tgtlang + ' > tmp.txt')
+	fr = open("tmp.txt", "r", encoding='utf-8')
+	content = fr.read().split("\n")
+	j = 0
+	for u in ulist:
+		if( u == "\n"):
+			continue
+		machine_hash[u] = content[j]
+		j = j + 1
+	fr.close()
+
+#search in bag of words;input=list,output=hash
 def transliterate(ulist):
 	bag_replaced_hash = {}
 	for item in ulist:
+		if(item == ""):
+			continue
 		if(item in bag_hash):
 			bag_replaced_hash[item] = bag_hash[item]
+		elif(item in machine_hash):
+				bag_replaced_hash[item] = machine_hash[item]
 		else:
 			bag_replaced_hash[item] = item
 	return bag_replaced_hash
@@ -77,16 +101,20 @@ def replaceInText(hash, text):
 		value = hash[key]
 		my_regex = r" " + key + r" "
 		text = re.sub(my_regex, r' ' + value + r' ', text, flags=re.MULTILINE)
+	print(text)
 	return text
 
 #detokenize the text after transliteration
 def detokenize(text):
 	text = re.sub(r' ?\n ?', '\n', text)
-	text = re.sub(r' ([\.,\?\)])', r'\1', text)
-	text = re.sub(r'([\'\"!\-_\+=\(:;]) ', r'\1', text)
+	text = re.sub(r' ([\.,\?\)।])', r'\1', text)
+	text = re.sub(r'([\'\"!\-_\+=\(:;]।) ', r'\1', text)
 
-	if(lang == "urdu"):
+	if(tgtlang == "urd"):
 		text = re.sub(r' ([؟،۔])', r'\1 ', text)
+
+	if(tgtlang == "hin"):
+		text = re.sub(r' ([\?,\.।])', r'\1 ', text)
 
 	text = re.sub(r' +', ' ', text)
 	text = re.sub(r'^ ', '', text)
@@ -103,7 +131,16 @@ fp2 = open(listfile, encoding="utf-8") # Open file on read mode
 words = fp2.read().split("\n") # Create a list containing all lines
 fp2.close() # Close file
 
+
+
+machine_hash = {}
 bag_hash = {}
+#specific for languages
+if(srclang == "urd" and tgtlang == "hin"):
+	bag_hash["؟"] = "?"
+	bag_hash["،"] = ","
+	bag_hash["۔"] = "।"
+
 #hash the bag of words
 for bag in words:
 	if bag == "":
@@ -114,6 +151,7 @@ for bag in words:
 lines = tokenize(lines)
 unique_words = get_unique_list(lines)
 #print(unique_words)
+get_mt_out(unique_words)
 found_hash = transliterate(unique_words)
 #print(found_hash)
 #print(lines)
@@ -123,4 +161,5 @@ lines = detokenize(lines)
 
 fpw = open(outfile, "w", encoding='utf-8')
 fpw.write(lines)
+fpw.close()
 #print(lines)
