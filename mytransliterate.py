@@ -66,6 +66,10 @@ def get_unique_list(text):
 
 #get machine transliterated text from command
 def get_mt_out(ulist):
+	if(os.system('/usr/local/bin/indictrans --version > /dev/null 2>&1') != 0):
+		print ('indictrans does not exist in your machine, so skipping this section.')
+		return
+
 	fpw1 = open("uwords.txt", "w", encoding='utf-8')
 	fpw1.write("\n".join(ulist))
 	fpw1.close()
@@ -101,7 +105,7 @@ def replaceInText(hash, text):
 		value = hash[key]
 		my_regex = r" " + key + r" "
 		text = re.sub(my_regex, r' ' + value + r' ', text, flags=re.MULTILINE)
-	print(text)
+	#print(text)
 	return text
 
 #detokenize the text after transliteration
