@@ -1,0 +1,19 @@
+2021-12-22 22:48:01,582 INFO: Parsing command line arguments
+2021-12-22 22:48:01,582 INFO: Received following arguments: inputfile=/home/nagaraju/Downloads/in1.txt, listfile=mybag-uniq.csv, source language=urd, target language=hin, replaceFlag=None, output file=out.txt
+2021-12-22 22:48:01,582 INFO: Going into normalize function: text=|ہائےہائے۔ کیسےکیسے زمانے دیکھےہیں عشق نے—!|
+2021-12-22 22:48:01,582 INFO: After normalize function: text=|ہائےہائے۔ کیسےکیسے زمانے دیکھےہیں عشق نے-!|
+2021-12-22 22:48:01,582 INFO: Going into tokenizer function
+2021-12-22 22:48:01,583 INFO: After tokenize function: text=| ہائےہائے ۔ کیسےکیسے زمانے دیکھےہیں عشق نے - ! |
+2021-12-22 22:48:01,583 INFO: Going into get_unique_list function
+2021-12-22 22:48:01,583 INFO: After get_unique_list function: unique_list=|____۔____عشق____نے____-____دیکھےہیں____ہائےہائے____کیسےکیسے____زمانے____!|
+2021-12-22 22:48:01,583 INFO: Going into get_mt_out function
+2021-12-22 22:48:02,535 INFO: After get_mt_out function: generated uwords.txt and temp.txt files and saved each unique_word mt output in hash={'': '', '۔': '.', 'عشق': 'इश्क', 'نے': 'ने', '-': '-', 'دیکھےہیں': 'देखेहैं', 'ہائےہائے': 'हायहाए', 'کیسےکیسے': 'कैसेकैसे', 'زمانے': 'जमाने', '!': '!'}
+2021-12-22 22:48:02,535 INFO: Going into transliterate function
+2021-12-22 22:48:02,536 INFO: After transliterate function a hash is generated that contains key as each word from input and value as output from either the bag or mtoutput; hash={'۔': '।', 'عشق': 'इश्क', 'نے': 'ने', '-': '-', 'دیکھےہیں': 'देखेहैं', 'ہائےہائے': 'हायहाए', 'کیسےکیسے': 'कैसेकैसे', 'زمانے': 'जमाने', '!': '!'}
+2021-12-22 22:48:02,536 INFO: Going into replaceInText function: text=| ہائےہائے ۔ کیسےکیسے زمانے دیکھےہیں عشق نے - ! |
+2021-12-22 22:48:02,536 INFO: replaceInText Function before subsitution, text= ہائےہائے ۔ کیسےکیسے زمانے دیکھےہیں عشق نے - ! 
+2021-12-22 22:48:02,536 INFO: replaceInText Function after subsitution, text= हायहाए । कैसेकैसे जमाने देखेहैं इश्क ने - ! 
+2021-12-22 22:48:02,536 INFO: After replaceInText function: text=| हायहाए । कैसेकैसे जमाने देखेहैं इश्क ने - ! |
+2021-12-22 22:48:02,536 INFO: Going into detokenize function
+2021-12-22 22:48:02,538 INFO: After detokenize function text=|हायहाए। कैसेकैसे जमाने देखेहैं इश्क ने-!|
+2021-12-22 22:48:02,538 INFO: Writing output to outfile=|out.txt|
