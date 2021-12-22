@@ -104,7 +104,7 @@ def replaceInText(hash, text):
 	for key in keys:
 		value = hash[key]
 		my_regex = r" " + key + r" "
-		text = re.sub(my_regex, r' ' + value + r' ', text, flags=re.MULTILINE)
+		text = re.sub(re.escape(my_regex), r' ' + value + r' ', text, flags=re.MULTILINE)
 	#print(text)
 	return text
 
