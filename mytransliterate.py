@@ -46,8 +46,9 @@ def normalize(text):
 	text = re.sub(r'\u201C', "\"", text, flags=re.MULTILINE)
 	text = re.sub(r'\u201D', "\"", text, flags=re.MULTILINE)
 	text = re.sub(r'\u2013', "-", text, flags=re.MULTILINE)
-	text = re.sub(r'\u2014', "-", text, flags=re.MULTILINE)
+	#text = re.sub(r'\u2014', "-", text, flags=re.MULTILINE)
 	text = re.sub(r'\ufeff', " ", text, flags=re.MULTILINE)
+	text = re.sub(r':۔', ":-", text, flags=re.MULTILINE)
 	return text
 
 
@@ -57,7 +58,10 @@ def tokenize(text):
 	text = re.sub(r'$', ' ', text)
 	text = re.sub(r'([\.]{3,})', '__ELLIP3__ ', text)
 	text = re.sub(r'([\.]{2,2})', '__ELLIP2__ ', text)
-	text = re.sub(r'([\.,\'\"!\-_\+=\(\):;\?])', r' \1 ', text)
+	text = re.sub(r'([۔]{3,})', ' __ARABIC3__ ', text)
+	text = re.sub(r'([۔]{2,2})', ' __ARABIC2__ ', text)
+	text = re.sub(r'([\.,\'\"!\-_\+=\(\):;\?—])', r' \1 ', text)
+	text = re.sub(r'\’\’', "", text)	#convert two single quotes into double quotes
 	if(srclang == "urd"):
 		text = re.sub(r'([؟،۔])', r' \1 ', text)
 
@@ -123,11 +127,16 @@ def replaceInText(hash, text):
 
 #detokenize the text after transliteration
 def detokenize(text):
-	text = re.sub(r'__ELLIP3__', '...', text)
-	text = re.sub(r'__ELLIP2__', '..', text)
-	text = re.sub(r' ?\n ?', '\n', text)
+
 	text = re.sub(r' ([\.,\?\)।])', r'\1', text)
-	text = re.sub(r' ([\'\"!\-\_\+=\(:;।]) ', r'\1', text)
+	text = re.sub(r' ([!\-\_\+=:;।—]) ?', r'\1', text)
+	text = re.sub(r'__ ?ELLIP3__', '...', text)
+	text = re.sub(r'__ ?ELLIP2__', '..', text)
+	text = re.sub(r'__ ?ARABIC3__', '...', text)
+	text = re.sub(r'__ ?ARABIC2__', '..', text)
+	text = re.sub(r'\( ', '(', text)
+	text = re.sub(r'([\'\"]) ', r'\1', text)
+	text = re.sub(r'( +)?\n( +)?', '\n', text)
 
 	if(tgtlang == "urd"):
 		text = re.sub(r' ([؟،۔])', r'\1 ', text)
