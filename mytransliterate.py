@@ -40,6 +40,8 @@ log.logging.info("Received following arguments: inputfile=%s, listfile=%s, sourc
 
 #normalize
 def normalize(text):
+	text = re.sub(r'\’\’', "\"", text)	#convert two consecutive 2019 single quotes into double quotes
+	text = re.sub(r'\‘\‘', "\"", text)	#convert two consecutive 2018 single quote into double quotes
 	text = re.sub(r'\u00A0', " ", text, flags=re.MULTILINE)
 	text = re.sub(r'\u2018', "\'", text, flags=re.MULTILINE)
 	text = re.sub(r'\u2019', "\'", text, flags=re.MULTILINE)
@@ -61,7 +63,6 @@ def tokenize(text):
 	text = re.sub(r'([۔]{3,})', ' __ARABIC3__ ', text)
 	text = re.sub(r'([۔]{2,2})', ' __ARABIC2__ ', text)
 	text = re.sub(r'([\.,\'\"!\-_\+=\(\):;\?—])', r' \1 ', text)
-	text = re.sub(r'\’\’', "", text)	#convert two single quotes into double quotes
 	if(srclang == "urd"):
 		text = re.sub(r'([؟،۔])', r' \1 ', text)
 
@@ -147,6 +148,7 @@ def detokenize(text):
 	text = re.sub(r' +', ' ', text)
 	text = re.sub(r'^ ', '', text)
 	text = re.sub(r' $', '', text)
+	text = re.sub(r'\"(.*) \"', r'"\1"', text)
 	return text
 
 #open input file using open file mode
