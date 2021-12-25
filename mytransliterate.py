@@ -67,7 +67,7 @@ def tokenize(text):
 		text = re.sub(r'([؟،۔])', r' \1 ', text)
 
 	#convert multiple spaces into single space
-	text = re.sub(r'( ){3,}', ' ', text)
+	text = re.sub(r' +', ' ', text)
 	text = re.sub(r'\n', ' \n ', text)
 	return text
 
