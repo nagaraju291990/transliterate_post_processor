@@ -141,6 +141,12 @@ def detokenize(text):
 	text = re.sub(r'([\'\"]) ', r'\1', text)
 	text = re.sub(r'( +)?\n( +)?', '\n', text)
 
+	if(tgtlang == "urd"):
+		text = re.sub(r' ([؟،۔])', r'\1 ', text)
+
+	if(tgtlang == "hin"):
+		text = re.sub(r'\b([\?,\.।])\b', r'\1 ', text)
+
 	# case-1
 	text = re.sub(r'([\u0900-\u09FF]+) ([\u0600-\u06FF]+)', r'\1-\1', text)
 	#case2,3
@@ -154,12 +160,6 @@ def detokenize(text):
 	#case-7,8
 	text = re.sub(r'(\n[\u0900-\u09FF]+) ([\u0900-\u09FF]+)([।])', r'\1 \2-', text)
 	text = re.sub(r'(\n[\u0900-\u09FF]+)([।])', r'\1-', text)
-
-	if(tgtlang == "urd"):
-		text = re.sub(r' ([؟،۔])', r'\1 ', text)
-
-	if(tgtlang == "hin"):
-		text = re.sub(r'\b([\?,\.।])\b', r'\1 ', text)
 
 	text = re.sub(r' +', ' ', text)
 	text = re.sub(r'^ ', '', text)
