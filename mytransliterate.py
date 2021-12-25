@@ -107,10 +107,13 @@ def transliterate(ulist):
 		if(item == ""):
 			continue
 		if(item in bag_hash):
+			log.logging.info("Found word in user bag;word=|%s|,target=|%s|" %(item, bag_hash[item]))
 			bag_replaced_hash[item] = bag_hash[item]
 		elif(item in machine_hash):
-				bag_replaced_hash[item] = machine_hash[item]
+			log.logging.info("Found word in machine transliteration;word=|%s|,target=|%s|" %(item, machine_hash[item]))
+			bag_replaced_hash[item] = machine_hash[item]
 		else:
+			log.logging.info("Word not found in either user bag or machine transliteration;word=|%s|" %(item))
 			bag_replaced_hash[item] = item
 	return bag_replaced_hash
 
@@ -120,9 +123,8 @@ def replaceInText(hash, text):
 	log.logging.info("replaceInText Function before subsitution, text=%s" %(text))
 	for key in keys:
 		value = hash[key]
-		my_regex = r" " + re.escape(key) + r"(?= )"
+		my_regex = r" " + re.escape(key) + r" "#r"(?= )"
 		text = re.sub(my_regex, r" " + value + " " , text, flags=re.UNICODE)
-		#text = re.sub(my_regex, r" " + value + " " , text, flags=re.UNICODE)
 	log.logging.info("replaceInText Function after subsitution, text=%s" %(text))
 	return text
 
@@ -139,6 +141,20 @@ def detokenize(text):
 	text = re.sub(r'([\'\"]) ', r'\1', text)
 	text = re.sub(r'( +)?\n( +)?', '\n', text)
 
+	# case-1
+	text = re.sub(r'([\u0900-\u09FF]+) ([\u0600-\u06FF]+)', r'\1-\1', text)
+	#case2,3
+	text = re.sub(r'([!]{1,})([\'\"])?', r'\1\2 ', text)
+	#case-4
+	text = re.sub(r':', ': ', text)
+	#case-5
+	text = re.sub(r'([0-9]+)([\.]) ([0-9]+)', r'\1\2\3', text)
+	#case-6
+	text = re.sub(r'([0-9]+)([\.])([0-9]+)([।])', r'\1\2\3.', text)
+	#case-7,8
+	text = re.sub(r'(\n[\u0900-\u09FF]+) ([\u0900-\u09FF]+)([।])', r'\1 \2-', text)
+	text = re.sub(r'(\n[\u0900-\u09FF]+)([।])', r'\1-', text)
+
 	if(tgtlang == "urd"):
 		text = re.sub(r' ([؟،۔])', r'\1 ', text)
 
@@ -149,6 +165,13 @@ def detokenize(text):
 	text = re.sub(r'^ ', '', text)
 	text = re.sub(r' $', '', text)
 	text = re.sub(r'\"(.*) \"', r'"\1"', text)
+	return text
+
+# Post process function 
+def post_process(text):
+	text = re.sub(r'(\b[\u0900-\u09FF]+\b) व (\b[\u0900-\u09FF]+\b)', r'\1-व-\2', text)
+	text = re.sub(r'(\b[\u0900-\u09FF]+\b) ए (\b[\u0900-\u09FF]+\b)', r'\1-ए-\2', text)
+	text = re.sub(r'(\b[\u0900-\u09FF]+\b) अ (\b[\u0900-\u09FF]+\b)', r'\1-अ-\2', text)
 	return text
 
 #open input file using open file mode
@@ -207,6 +230,10 @@ log.logging.info("Going into detokenize function")
 
 lines = detokenize(lines)
 log.logging.info("After detokenize function text=|%s|" %(lines))
+log.logging.info("Going into post_process function")
+
+lines = post_process(lines)
+log.logging.info("After post_process function text=|%s|" %(lines))
 log.logging.info("Writing output to outfile=|%s|" %(outfile))
 
 fpw = open(outfile, "w", encoding='utf-8')
