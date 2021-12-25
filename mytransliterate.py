@@ -62,12 +62,12 @@ def tokenize(text):
 	text = re.sub(r'([\.]{2,2})', '__ELLIP2__ ', text)
 	text = re.sub(r'([۔]{3,})', ' __ARABIC3__ ', text)
 	text = re.sub(r'([۔]{2,2})', ' __ARABIC2__ ', text)
-	text = re.sub(r'([\.,\'\"!\-_\+=\(\):;\?—])', r' \1 ', text)
+	text = re.sub(r'([\.,\'\"!\-_\+=\(\):;\?—])', r'  \1  ', text)
 	if(srclang == "urd"):
 		text = re.sub(r'([؟،۔])', r' \1 ', text)
 
 	#convert multiple spaces into single space
-	text = re.sub(r' +', ' ', text)
+	text = re.sub(r'( ){3,}', ' ', text)
 	text = re.sub(r'\n', ' \n ', text)
 	return text
 
@@ -120,7 +120,7 @@ def replaceInText(hash, text):
 	log.logging.info("replaceInText Function before subsitution, text=%s" %(text))
 	for key in keys:
 		value = hash[key]
-		my_regex = r" " + re.escape(key) + r" "
+		my_regex = r" " + re.escape(key) + r"(?= )"
 		text = re.sub(my_regex, r" " + value + " " , text, flags=re.UNICODE)
 		#text = re.sub(my_regex, r" " + value + " " , text, flags=re.UNICODE)
 	log.logging.info("replaceInText Function after subsitution, text=%s" %(text))
