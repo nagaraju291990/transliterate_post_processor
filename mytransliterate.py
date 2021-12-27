@@ -164,6 +164,14 @@ def detokenize(text):
 	text = re.sub(r'([।\?])([\'\"])', r'\1\2 ', text)
 	# case-11,12
 	text = re.sub(r'([।\?]) ([\'\"])', r'\1\2 ', text)
+	# case-13,14
+	text = re.sub(r'( )([\'\"])([,!])', r'\2\3 ', text)
+	# case-15
+	text = re.sub(r'([,])([\'\"])([\u0900-\u09FF]+)', r'\1 \2\3 ', text)
+	# case-16
+	text = re.sub(r'([\u0900-\u09FF]+)([\'\"])([\u0900-\u09FF]+)', r'\1\2 \3 ', text)
+	# case-17
+	text = re.sub(r'([\)])([\'\"])([\u0900-\u09FF]+)', r'\1 \2\3 ', text)
 
 
 	text = re.sub(r' +', ' ', text)
