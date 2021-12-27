@@ -177,7 +177,7 @@ def detokenize(text):
 	text = re.sub(r' +', ' ', text)
 	text = re.sub(r'^ ', '', text)
 	text = re.sub(r' $', '', text)
-	text = re.sub(r'\"(.*) \"', r'"\1"', text)
+	#text = re.sub(r'\"(.*) \"', r'"\1"', text)
 	return text
 
 # Post process function 
