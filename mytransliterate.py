@@ -9,19 +9,23 @@ import logger as log
 
 parser = ArgumentParser(description='#program to find and replace words in the file my making them unique and search in bag and in engine(shell or API) \n\r'+
 						"How to Run?\n" +
-						"python3 " + sys.argv[0] + " -i=inputfie" + " -r=y|n -b=bagfile.txt -l=urdu"
+						"python3 mytransliterate.py -sb=urd-mono-bag.txt -tb=hin-mono-bag.txt -i=urd-mono-sample-text.txt -b=mybag-uniq.csv -o=out.txt -s=urd -t=hin"
 						)
 
 parser.add_argument("-i", "--input", dest="inputfile",
 					help="provide .txt file name",required=True)
-parser.add_argument("-r", "--replace", dest="replaceFlag",
-					help="replace anywhere in the string",required=False)
-parser.add_argument("-b", "--bagfile", dest="listfile",
+#parser.add_argument("-r", "--replace", dest="replaceFlag",
+#					help="replace anywhere in the string",required=False)
+parser.add_argument("-bb", "--bagfile", dest="listfile",
 					help="specify a list file that has tab seperated content", required=True)
 parser.add_argument("-s", "--source", dest="srclang",
 					help="specify source language;-s=urd|hin|tel", required=True)
+parser.add_argument("-sb", "--preprocessbag", dest="srcbag",
+					help="specify pre processor bag;-sb=pre.bag", required=True)
 parser.add_argument("-t", "--target", dest="tgtlang",
 					help="specify target language;-t=urd|hin|tel", required=True)
+parser.add_argument("-tb", "--postprocessbag", dest="tgtbag",
+					help="specify post processor bag;-tb=post.bag", required=True)
 parser.add_argument("-o", "--outfile", dest="outfile",
 					help="specify output file name", required=True)
 
@@ -33,10 +37,12 @@ inputfile = args.inputfile
 listfile = args.listfile
 srclang = args.srclang
 tgtlang = args.tgtlang
-replaceFlag = args.replaceFlag
+srcbag = args.srcbag
+tgtbag = args.tgtbag
+#replaceFlag = args.replaceFlag
 outfile = args.outfile
 
-log.logging.info("Received following arguments: inputfile=%s, listfile=%s, source language=%s, target language=%s, replaceFlag=%s, output file=%s" %(inputfile, listfile, srclang, tgtlang, replaceFlag, outfile))
+log.logging.info("Received following arguments: inputfile=%s, listfile=%s, source language=%s, target language=%s, srcbag=%s, tgtbag=%s, output file=%s" %(inputfile, listfile, srclang, tgtlang, srcbag, tgtbag, outfile))
 
 #normalize
 def normalize(text):
@@ -53,6 +59,18 @@ def normalize(text):
 	text = re.sub(r':۔', ":-", text, flags=re.MULTILINE)
 	return text
 
+#pre process 
+def pre_process(text, hash):
+	log.logging.info("In Pre Process Function, text=%s" %(text))
+	#Rules
+	keys = hash.keys()
+	log.logging.info("Pre Process Function before subsitution from pre process bag, text=%s" %(text))
+	for key in keys:
+		value = hash[key]
+		my_regex = r" " + re.escape(key) + r" "#r"(?= )"
+		text = re.sub(my_regex, r" " + value + " " , text, flags=re.UNICODE)
+	log.logging.info("Pre Process Function after subsitution from pre process bag, text=%s" %(text))
+	return text
 
 #tokenize the text- default punctuations and based on language if given in options
 def tokenize(text):
@@ -181,10 +199,19 @@ def detokenize(text):
 	return text
 
 # Post process function 
-def post_process(text):
+def post_process(text, hash):
+	log.logging.info("In Post Process Function, text=%s" %(text))
 	text = re.sub(r'(\b[\u0900-\u09FF]+\b) व (\b[\u0900-\u09FF]+\b)', r'\1-व-\2', text)
 	text = re.sub(r'(\b[\u0900-\u09FF]+\b) ए (\b[\u0900-\u09FF]+\b)', r'\1-ए-\2', text)
 	text = re.sub(r'(\b[\u0900-\u09FF]+\b) अ (\b[\u0900-\u09FF]+\b)', r'\1-अ-\2', text)
+	keys = hash.keys()
+	log.logging.info("Post Process Function before subsitution from post process bag, text=%s" %(text))
+	for key in keys:
+		value = hash[key]
+		my_regex = r" " + re.escape(key) + r" "#r"(?= )"
+		log.logging.info("Current word is;key=|%s|,target=|%s|" %(key, hash[key]))
+		text = re.sub(my_regex, r" " + value + " " , text, flags=re.UNICODE)
+	log.logging.info("Post Process Function after subsitution from post process bag, text=%s" %(text))
 	return text
 
 #open input file using open file mode
@@ -197,10 +224,20 @@ fp2 = open(listfile, encoding="utf-8") # Open file on read mode
 words = fp2.read().split("\n") # Create a list containing all lines
 fp2.close() # Close file
 
+#open list file using open file mode
+fp3 = open(srcbag, encoding="utf-8") # Open file on read mode
+srcbag_words = fp3.read().split("\n") # Create a list containing all lines
+fp3.close() # Close file
 
+#open list file using open file mode
+fp4 = open(tgtbag, encoding="utf-8") # Open file on read mode
+tgtbag_words = fp4.read().split("\n") # Create a list containing all lines
+fp4.close() # Close file
 
 machine_hash = {}
 bag_hash = {}
+src_bag_hash = {}
+tgt_bag_hash = {}
 #specific for languages
 if(srclang == "urd" and tgtlang == "hin"):
 	bag_hash["؟"] = "?"
@@ -214,11 +251,29 @@ for bag in words:
 	word = bag.split("\t")
 	bag_hash[word[0]] = word[1]
 
+#hash the bag of words
+for src in srcbag_words:
+	if src == "":
+		continue
+	word = src.split("\t")
+	src_bag_hash[word[0]] = word[1]
+
+#hash the bag of words
+for tgt in tgtbag_words:
+	if tgt == "":
+		continue
+	word = tgt.split("\t")
+	tgt_bag_hash[word[0]] = word[1]
+
 log.logging.info("Going into normalize function: text=|%s|" %(lines))
 
 lines = normalize(lines)
 log.logging.info("After normalize function: text=|%s|" %(lines))
-log.logging.info("Going into tokenizer function")
+log.logging.info("Going into pre process function")
+
+lines = pre_process(lines, src_bag_hash)
+log.logging.info("After pre process function text=|%s|" %(lines))
+log.logging.info("Going into tokenize function")
 
 lines = tokenize(lines)
 log.logging.info("After tokenize function: text=|%s|" %(lines))
@@ -245,7 +300,7 @@ lines = detokenize(lines)
 log.logging.info("After detokenize function text=|%s|" %(lines))
 log.logging.info("Going into post_process function")
 
-lines = post_process(lines)
+lines = post_process(lines, tgt_bag_hash)
 log.logging.info("After post_process function text=|%s|" %(lines))
 log.logging.info("Writing output to outfile=|%s|" %(outfile))
 

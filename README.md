@@ -9,7 +9,7 @@ Input file is a machine generated transliterated(or could be any general) file
     python3 post_processor.py -i=inputfile.txt  -l=list.txt -r=y
 
 ### Transliterate -- Mytransliterate.py
-	python3 mytransliterate.py -i=mystory.txt -b=mybag-uniq.csv -o=out.txt -s=urd -t=hin
+	python3 mytransliterate.py -sb=urd-mono-bag.txt -tb=hin-mono-bag.txt -i=urd-mono-sample-text.txt -b=mybag-uniq.csv -o=out.txt -s=urd -t=hin
 
 ### list.txt
 ```bash
