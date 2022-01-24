@@ -236,6 +236,14 @@ fp4.close() # Close file
 
 machine_hash = {}
 bag_hash = {}
+
+six_word_hash = {}
+five_word_hash = {}
+four_word_hash = {}
+three_word_hash = {}
+two_word_hash = {}
+word_hash = {}
+
 src_bag_hash = {}
 tgt_bag_hash = {}
 #specific for languages
@@ -256,15 +264,53 @@ for src in srcbag_words:
 	if src == "":
 		continue
 	word = src.split("\t")
-	src_bag_hash[word[0]] = word[1]
+	#src_bag_hash[word[0]] = word[1]
+	if(len(re.findall(" ", word[0])) == 5 ):
+		six_word_hash[word[0]] = word[1]
+	elif(len(re.findall(" ", word[0])) == 4 ):
+		five_word_hash[word[0]] = word[1]
+	elif(len(re.findall(" ", word[0])) == 3 ):
+		four_word_hash[word[0]] = word[1]
+	elif(len(re.findall(" ", word[0])) == 2 ):
+		three_word_hash[word[0]] = word[1]
+	elif(len(re.findall(" ", word[0])) == 1 ):
+		two_word_hash[word[0]] = word[1]
+	else:
+		word_hash[word[0]] = word[1]
+
+for d in (six_word_hash, five_word_hash, four_word_hash, three_word_hash, two_word_hash, word_hash):
+	src_bag_hash.update(d)
+
+six_word_hash = {}
+five_word_hash = {}
+four_word_hash = {}
+three_word_hash = {}
+two_word_hash = {}
+word_hash = {}
 
 #hash the bag of words
 for tgt in tgtbag_words:
 	if tgt == "":
 		continue
 	word = tgt.split("\t")
-	tgt_bag_hash[word[0]] = word[1]
+	#tgt_bag_hash[word[0]] = word[1]
+	if(len(re.findall(" ", word[0])) == 5 ):
+		six_word_hash[word[0]] = word[1]
+	elif(len(re.findall(" ", word[0])) == 4 ):
+		five_word_hash[word[0]] = word[1]
+	elif(len(re.findall(" ", word[0])) == 3 ):
+		four_word_hash[word[0]] = word[1]
+	elif(len(re.findall(" ", word[0])) == 2 ):
+		three_word_hash[word[0]] = word[1]
+	elif(len(re.findall(" ", word[0])) == 1 ):
+		two_word_hash[word[0]] = word[1]
+	else:
+		word_hash[word[0]] = word[1]
 
+for d in (six_word_hash, five_word_hash, four_word_hash, three_word_hash, two_word_hash, word_hash):
+	tgt_bag_hash.update(d)
+print(src_bag_hash)
+print(tgt_bag_hash)
 log.logging.info("Going into normalize function: text=|%s|" %(lines))
 
 lines = normalize(lines)
