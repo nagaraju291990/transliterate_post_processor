@@ -67,8 +67,9 @@ def pre_process(text, hash):
 	log.logging.info("Pre Process Function before subsitution from pre process bag, text=%s" %(text))
 	for key in keys:
 		value = hash[key]
-		my_regex = r" " + re.escape(key) + r" "#r"(?= )"
-		text = re.sub(my_regex, r" " + value + " " , text, flags=re.UNICODE)
+		#my_regex = r" " + re.escape(key) + r" "#r"(?= )"
+		my_regex = r"(^|[,\"\'\( \/\|])" + key + r"([ ,\.!\"।\'\/\;\:)]|$)"
+		text = re.sub(my_regex, r"\1" + value + r"\2" , text, flags=re.UNICODE)
 	log.logging.info("Pre Process Function after subsitution from pre process bag, text=%s" %(text))
 	return text
 
@@ -208,9 +209,10 @@ def post_process(text, hash):
 	log.logging.info("Post Process Function before subsitution from post process bag, text=%s" %(text))
 	for key in keys:
 		value = hash[key]
-		my_regex = r" " + re.escape(key) + r" "#r"(?= )"
+		#my_regex = r" " + re.escape(key) + r" "#r"(?= )"
+		my_regex = r"(^|[,\"\'\( \/\|])" + key + r"([ ,\.!\"।\'\/\;\:)]|$)"
 		log.logging.info("Current word is;key=|%s|,target=|%s|" %(key, hash[key]))
-		text = re.sub(my_regex, r" " + value + " " , text, flags=re.UNICODE)
+		text = re.sub(my_regex, r"\1" + value + r"\2" , text, flags=re.UNICODE)
 	log.logging.info("Post Process Function after subsitution from post process bag, text=%s" %(text))
 	return text
 
@@ -309,8 +311,8 @@ for tgt in tgtbag_words:
 
 for d in (six_word_hash, five_word_hash, four_word_hash, three_word_hash, two_word_hash, word_hash):
 	tgt_bag_hash.update(d)
-print(src_bag_hash)
-print(tgt_bag_hash)
+#print(src_bag_hash)
+#print(tgt_bag_hash)
 log.logging.info("Going into normalize function: text=|%s|" %(lines))
 
 lines = normalize(lines)
