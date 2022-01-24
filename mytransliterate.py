@@ -68,7 +68,7 @@ def pre_process(text, hash):
 	for key in keys:
 		value = hash[key]
 		#my_regex = r" " + re.escape(key) + r" "#r"(?= )"
-		my_regex = r"(^|[,\"\'\( \/\|])" + key + r"([ ,\.!\"।\'\/\;\:)]|$)"
+		my_regex = r"(^|[,\"\'\( \/\|\n])" + key + r"([ ,\.!\"।\'\/\;\:)\n]|$)"
 		text = re.sub(my_regex, r"\1" + value + r"\2" , text, flags=re.UNICODE)
 	log.logging.info("Pre Process Function after subsitution from pre process bag, text=%s" %(text))
 	return text
@@ -210,7 +210,7 @@ def post_process(text, hash):
 	for key in keys:
 		value = hash[key]
 		#my_regex = r" " + re.escape(key) + r" "#r"(?= )"
-		my_regex = r"(^|[,\"\'\( \/\|])" + key + r"([ ,\.!\"।\'\/\;\:)]|$)"
+		my_regex = r"(^|[,\"\'\( \/\|\n])" + key + r"([ ,\.!\"।\'\/\;\:)\n]|$)"
 		log.logging.info("Current word is;key=|%s|,target=|%s|" %(key, hash[key]))
 		text = re.sub(my_regex, r"\1" + value + r"\2" , text, flags=re.UNICODE)
 	log.logging.info("Post Process Function after subsitution from post process bag, text=%s" %(text))
