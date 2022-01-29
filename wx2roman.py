@@ -101,7 +101,8 @@ def wx2roman(text):
 	text = re.sub(r'Nq', 'nri', text)
 	text = re.sub(r'nq', 'nri', text)
 	text = re.sub(r'pq', 'pri', text)
-	text = re.sub(r'Pq', 'phri', text)
+	#text = re.sub(r'Pq', 'phri', text)
+	text = re.sub(r'Pq', 'fri', text)
 	text = re.sub(r'bq', 'bri', text)
 	text = re.sub(r'Bq', 'bhri', text)
 	text = re.sub(r'mq', 'mri', text)
@@ -126,7 +127,8 @@ def wx2roman(text):
 	text = re.sub(r'NQ', 'nrI', text)
 	text = re.sub(r'nQ', 'nrI', text)
 	text = re.sub(r'pQ', 'prI', text)
-	text = re.sub(r'PQ', 'phrI', text)
+	#text = re.sub(r'PQ', 'phrI', text)
+	text = re.sub(r'PQ', 'frI', text)
 	text = re.sub(r'bQ', 'brI', text)
 	text = re.sub(r'BQ', 'bhrI', text)
 	text = re.sub(r'mQ', 'mrI', text)
@@ -176,8 +178,8 @@ def wx2roman(text):
 	#text = re.sub(r'g', 'g', text)
 	text = re.sub(r'\u0047', 'gh', text) # G->gh
 	text = re.sub(r'f', 'n', text)
-	#text = re.sub(r'c', 'c', text)
-	text = re.sub(r'\u0043', 'ch', text) # C->ch
+	text = re.sub(r'c', 'ch', text)
+	text = re.sub(r'\u0043', 'chh', text) # C->ch
 	#text = re.sub(r'j', 'j', text)
 	text = re.sub(r'\u004A', 'jh', text) # J->jh
 	text = re.sub(r'F', 'n', text)
@@ -194,6 +196,7 @@ def wx2roman(text):
 	text = re.sub(r'\u0058', 'dh', text) # X->dh
 	#text = re.sub(r'n', 'n', text)
 	#text = re.sub(r'p', 'p', text)
+	#text = re.sub(r'\u0050', 'ph', text) # P->ph
 	text = re.sub(r'\u0050', 'ph', text) # P->ph
 	#text = re.sub(r'b', 'b', text)
 	text = re.sub(r'\u0042', 'bh', text) # B->bh
@@ -235,7 +238,7 @@ def wx2roman(text):
 	text = re.sub(r'__y4', 'drI', text)
 	text = re.sub(r'__y5', 'dhrI', text)
 	text = re.sub(r'__y6', 'shrI', text)
-	text = re.sub(r'__y7', 'R', text)
+	text = re.sub(r'__y7', 'Ra', text)
 	text = re.sub(r'__y8', 'Rha', text)
 	text = re.sub(r'__y9', 'Rri', text)
 	text = re.sub(r'__r1', 'Rhri', text)
@@ -244,13 +247,31 @@ def wx2roman(text):
 	text = re.sub(r'__r4', 'R', text)
 	text = re.sub(r'__r5', 'Rh', text)
 
+        # customization
+	text = re.sub(r'I', 'ee', text)
+	text = re.sub(r'R', 'd', text)
+	text = re.sub(r'T', 't', text)
+	text = re.sub(r'D', 'd', text)
+	text = re.sub(r'A', 'aa', text)
+	text = re.sub(r'U', 'oo', text)
+
+        #remove "a" from word end
+	text = re.sub(r'^([\.,\‘\’\(\)]*)([a-zA-Z]+[pfmybsdjgknrthvla])a([\.,\‘\’\(\)\?]*)$', r'\1\2\3', text)
+
+        # normalize words
+	text = re.sub(r'^men$', 'mein', text)
+	text = re.sub(r'^naheen$', 'nahin', text)
+
 	return text;
 
 
 #open input file using open file mode
 fp1 = open(inputfile, encoding="utf-8") # Open file on read mode
-inputs = fp1.read()#.split("\n") # Create a list containing all lines
+inputs = fp1.read().split("\n") # Create a list containing all lines
 fp1.close() # Close file
 
-inputs = wx2roman(inputs)
-print(inputs)
+for line in inputs:
+    line = wx2roman(line)
+    print(line)
+#inputs = wx2roman(inputs)
+#print(inputs)

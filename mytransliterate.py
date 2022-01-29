@@ -59,7 +59,7 @@ def normalize(text):
 	text = re.sub(r':۔', ":-", text, flags=re.MULTILINE)
 	return text
 
-#pre process 
+#pre process
 def pre_process(text, hash):
 	log.logging.info("In Pre Process Function, text=%s" %(text))
 	#Rules
@@ -199,12 +199,15 @@ def detokenize(text):
 	text = re.sub(r' \"(\u0964)', r'"\1', text)
 	return text
 
-# Post process function 
+# Post process function
 def post_process(text, hash):
 	log.logging.info("In Post Process Function, text=%s" %(text))
 	text = re.sub(r'(\b[\u0900-\u09FF]+\b) व (\b[\u0900-\u09FF]+\b)', r'\1-व-\2', text)
-	text = re.sub(r'(\b[\u0900-\u09FF]+\b) ए (\b[\u0900-\u09FF]+\b)', r'\1-ए-\2', text)
-	text = re.sub(r'(\b[\u0900-\u09FF]+\b) अ (\b[\u0900-\u09FF]+\b)', r'\1-अ-\2', text)
+	#text = re.sub(r'(\b[\u0900-\u09FF]+\b) ए (\b[\u0900-\u09FF]+\b)', r'\1-ए-\2', text)
+	#text = re.sub(r'(\b[\u0900-\u09FF]+\b) अ (\b[\u0900-\u09FF]+\b)', r'\1-अ-\2', text)
+        # ge,ga, gi - गे,गा,गी
+	text = re.sub(r'([\u0900-\u09FF]+) (\u0917\u0947|\u0917\u093E|\u0917\u0940)', r'\1\2', text)
+	text = re.sub(r'( [\u0900-\u09FF]+)(\u0939\u0948[\u0902]*\u0964)', r'\1 \2', text)
 	keys = hash.keys()
 	log.logging.info("Post Process Function before subsitution from post process bag, text=%s" %(text))
 	for key in keys:
