@@ -95,6 +95,7 @@ def get_unique_list(text):
 	text = text.replace("\n", "")
 	all_list = text.split(" ")
 	u_list = list(set(all_list))
+	u_list = [ul  for ul in u_list  if not re.match(r'^[\u0900-\u09FF]+$', ul)]
 	#print(u_list)
 	return u_list
 
