@@ -29,3 +29,8 @@ This script will extract nukta characters from input file
 ```bash
 python3 grep_list.py inputfile
 ```
+
+## extract hyphenated words from translated file
+```
+python3 hyphenated_words.py -i=input.xlsx extract hyphenated words -b=bag.txt
+```
